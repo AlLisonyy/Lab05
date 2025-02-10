@@ -1,6 +1,6 @@
 ---
-title: "Hotel bookings - factors"
-author: "YOU"
+title: "Lab 05 - Wrangling spatial data"
+author: "Allison Li"
 date: "`r Sys.Date()`"
 output: 
   html_document: 
