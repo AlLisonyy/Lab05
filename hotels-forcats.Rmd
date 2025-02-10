@@ -9,8 +9,9 @@ output:
 ---
 
 ```{r load-pkg, message = FALSE}
+devtools::install_github("rstudio-education/dsbox")
 library(tidyverse)
-library(skimr)
+library(dsbox)
 ```
 
 ```{r load-data, message = FALSE}
