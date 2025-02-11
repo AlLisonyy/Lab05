@@ -1,7 +1,7 @@
 ---
 title: "Lab 05 - Wrangling spatial data"
 author: "Allison Li"
-date: "`r Sys.Date()`"
+date: "02/09/2025"
 output: 
   html_document: 
     toc: yes
@@ -9,10 +9,33 @@ output:
 ---
 
 ```{r load-pkg, message = FALSE}
-devtools::install_github("rstudio-education/dsbox")
+##devtools::install_github("rstudio-education/dsbox")
 library(tidyverse)
 library(dsbox)
 ```
+
+### Exercise 1
+```{r filtered AK data}
+dn_ak <- dennys %>%
+  filter(state == "AK")
+nrow(dn_ak)
+
+lq_ak <- laquinta %>%
+  filter(state == "AK")
+nrow(dn_ak)
+```
+
+There are `r nrow(dn_ak)` Denny's stores in Alaska and `r nrow(lq_ak)` La Quinta hotels in Alaska.
+
+### Exercise 2
+
+```{r}
+pairings_of_lqak <- nrow(dn_ak) * nrow(lq_ak)
+cat("The number of pairings between the locations of Denny’s and La Quinta hotels in Alaska are:", pairings_of_lqak, "\n")
+```
+
+
+### Exercise 3
 
 ```{r load-data, message = FALSE}
 # From TidyTuesday: https://github.com/rfordatascience/tidytuesday/blob/master/data/2020/2020-02-11/readme.md
