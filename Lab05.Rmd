@@ -1,0 +1,87 @@
+---
+title: "Lab 05 - Wrangling spatial data"
+author: "Allison Li"
+date: "02/09/2025"
+output: 
+  html_document: 
+    toc: yes
+    toc_float: yes
+---
+
+```{r load-pkg, message = FALSE}
+##devtools::install_github("rstudio-education/dsbox")
+library(tidyverse)
+library(dsbox)
+```
+
+### Exercise 1
+```{r filtered AK data}
+dn_ak <- dennys %>%
+  filter(state == "AK")
+nrow(dn_ak)
+
+lq_ak <- laquinta %>%
+  filter(state == "AK")
+nrow(dn_ak)
+```
+
+There are `r nrow(dn_ak)` Denny's stores in Alaska and `r nrow(lq_ak)` La Quinta hotels in Alaska.
+
+### Exercise 2
+
+```{r}
+pairings_of_lqak <- nrow(dn_ak) * nrow(lq_ak)
+cat("The number of pairings between the locations of Denny’s and La Quinta hotels in Alaska are:", pairings_of_lqak, "\n")
+```
+I asked ChatGPT to help me generate this code because I was not sure what could be the correct function for this.
+
+### Exercise 3
+
+```{r load-data, message = FALSE}
+
+dn_lq_ak <- full_join(dn_ak, lq_ak, 
+                      by = "state")
+dn_lq_ak
+```
+
+### Exercise 4
+
+There are `r ncol(dn_lq_ak)` observations in the joined data frame. The names including city.x, zip.x, longitude.x, latitude.x, address.x, which all refer to the locations of the Denny's. The names of the rest variables, including city.y, zip.y, longitude.y, latitude.y, address.y all refer to the locations of the La Quinta hotels. 
+
+### Exercise 5
+```{r haversine}
+haversine <- function(long1, lat1, long2, lat2, round = 3) {
+  # convert to radians
+  long1 <- long1 * pi / 180
+  lat1 <- lat1 * pi / 180
+  long2 <- long2 * pi / 180
+  lat2 <- lat2 * pi / 180
+
+  R <- 6371 # Earth mean radius in km
+
+  a <- sin((lat2 - lat1) / 2)^2 + cos(lat1) * cos(lat2) * sin((long2 - long1) / 2)^2
+  d <- R * 2 * asin(sqrt(a))
+
+  return(round(d, round)) # distance in km
+}
+```
+
+To answer the question of what function to use from the tidyverse to add a new variable while keeping the existing ones, I believe we can use mutate().
+
+### Exercise 6
+```{r distance between all pairs}
+
+dn_lq_ak <- dn_lq_ak %>%
+  mutate(distance = haversine(longitude.x, latitude.x, longitude.y, latitude.y))
+
+print(dn_lq_ak)
+```
+
+### Exercise 7
+
+```{r minimum distance}
+dn_lq_ak_mindist <- dn_lq_ak %>%
+  group_by(address.x) %>%
+  summarize(closest = min(distance))
+```
+
