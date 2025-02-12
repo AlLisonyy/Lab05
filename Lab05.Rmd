@@ -83,5 +83,59 @@ print(dn_lq_ak)
 dn_lq_ak_mindist <- dn_lq_ak %>%
   group_by(address.x) %>%
   summarize(closest = min(distance))
+print(dn_lq_ak_mindist)
 ```
 
+### Exercise 8
+
+
+add plot lines between stores.
+
+### Exercise 9.1
+```{r filtered NC data}
+dn_nc <- dennys %>%
+  filter(state == "NC")
+nrow(dn_nc)
+
+lq_nc <- laquinta %>%
+  filter(state == "NC")
+nrow(dn_nc)
+```
+### Exercise 9.2
+```{r all possible pairings}
+pairings_of_lqnc <- nrow(dn_nc) * nrow(lq_nc)
+cat("The number of pairings between the locations of Denny’s and La Quinta hotels in Alaska are:", pairings_of_lqnc, "\n")
+```
+### Exercise 9.3
+```{r all the distance between in NC}
+dn_lq_nc <- full_join(dn_nc, lq_nc, 
+                      by = "state")
+dn_lq_nc
+
+dn_lq_nc <- dn_lq_nc %>%
+  mutate(distance = haversine(longitude.x, latitude.x, longitude.y, latitude.y))
+
+print(dn_lq_nc)
+```
+### Exercise 9.4
+```{r minimum distances in NC}
+dn_lq_nc_minidis <- dn_lq_nc %>%
+  group_by(address.x) %>%
+  summarize(closest = min(distance))
+print(dn_lq_nc_minidis)
+```
+
+
+### Exercise 10.1
+
+### Exercise 10.2
+
+### Exercise 10.3
+
+### Exercise 10.4
+### Exercise 10.5
+
+### Exercise 11
+
+
+### Exercise 12
