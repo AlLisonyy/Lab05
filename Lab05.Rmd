@@ -81,25 +81,22 @@ print(dn_lq_ak)
 
 ```{r minimum distance}
 
-dn_lq_ak <- dn_lq_ak %>%
+dn_lq_ak_mindist <- dn_lq_ak %>%
   group_by(address.x) %>%
   mutate(closest = min(distance))
 
-print(dn_lq_ak)
+print(dn_lq_ak_mindist)
 ```
 
 ### Exercise 8
 
-```{r report}
-# The mean of the three minimum distances
+```{r report and visualization}
+## Mean 
 mean_closestdist <- mean(dn_lq_ak_mindist$closest) 
-#The standard deviation of all three minimum distances
+## Standard deviation 
 sd_closestdist <- sd(dn_lq_ak_mindist$closest) 
-```
 
-The three minimum distance between the Denny's and La Quinta hotels are `r round(sort(dn_lq_ak_mindist$closest)[1], 2)`, `r round(sort(dn_lq_ak_mindist$closest)[2], 2)`, and `r round(sort(dn_lq_ak_mindist$closest)[3], 2)` separately. The mean for the minimum distances is `r round(mean_closestdist, 2)` while the standard deviation is `r round(sd_closestdist, 2)`.
-
-```{r visualization}
+## I want to merge the two dataset so that I can have a set including five stores and their location information, as well as which ones are La Quinta and which ones are Denny's.
 dn_ak <- dn_ak %>% mutate(source = "Denny's")
 lq_ak <- lq_ak %>% mutate(source = "La Quinta")
 merged_data_ak <- bind_rows(dn_ak, lq_ak)
@@ -123,7 +120,10 @@ ggplot(merged_data_ak, aes(x = longitude, y = latitude, color = source)) +
        color = "Dataset")
 
 ```
-With the help of Chatgpt, I am able to add the purple lines that demostrate the minimum distances between Denny's and La Quinta hotels, yay!
+
+The three minimum distance between the Denny's and La Quinta hotels are `r round(sort(dn_lq_ak_mindist$closest)[1], 2)`, `r round(sort(dn_lq_ak_mindist$closest)[2], 2)`, and `r round(sort(dn_lq_ak_mindist$closest)[3], 2)` separately. The mean for the minimum distances is `r round(mean_closestdist, 2)` while the standard deviation is `r round(sd_closestdist, 2)`.
+
+In terms of visiualization, with the help of Chatgpt, I am able to add the purple lines that demostrate the minimum distances between Denny's and La Quinta hotels, yay!
 
 ### Exercise 9.1
 ```{r filtered NC data}
