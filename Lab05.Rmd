@@ -80,16 +80,50 @@ print(dn_lq_ak)
 ### Exercise 7
 
 ```{r minimum distance}
-dn_lq_ak_mindist <- dn_lq_ak %>%
+
+dn_lq_ak <- dn_lq_ak %>%
   group_by(address.x) %>%
-  summarize(closest = min(distance))
-print(dn_lq_ak_mindist)
+  mutate(closest = min(distance))
+
+print(dn_lq_ak)
 ```
 
 ### Exercise 8
 
+```{r report}
+# The mean of the three minimum distances
+mean_closestdist <- mean(dn_lq_ak_mindist$closest) 
+#The standard deviation of all three minimum distances
+sd_closestdist <- sd(dn_lq_ak_mindist$closest) 
+```
 
-add plot lines between stores.
+The three minimum distance between the Denny's and La Quinta hotels are `r round(sort(dn_lq_ak_mindist$closest)[1], 2)`, `r round(sort(dn_lq_ak_mindist$closest)[2], 2)`, and `r round(sort(dn_lq_ak_mindist$closest)[3], 2)` separately. The mean for the minimum distances is `r round(mean_closestdist, 2)` while the standard deviation is `r round(sd_closestdist, 2)`.
+
+```{r visualization}
+dn_ak <- dn_ak %>% mutate(source = "Denny's")
+lq_ak <- lq_ak %>% mutate(source = "La Quinta")
+merged_data_ak <- bind_rows(dn_ak, lq_ak)
+
+## The section block below is helped by ChatGPT. I asked it how to generate a dataset with only the three minimum distances and their longitude, latitude, and other variables of Denny's and La Quinta hotels accordingly.
+dn_lq_ak_minidis <- dn_lq_ak %>%
+  group_by(address.x) %>%
+  filter(distance == min(distance)) %>% 
+  ungroup()
+
+## I want the visualized plot to be able to show the shortest distances between each Denny's and La Quinta hotel. 
+ggplot(merged_data_ak, aes(x = longitude, y = latitude, color = source)) +
+  geom_point(size = 3, alpha = 0.8) + 
+  geom_segment(data = dn_lq_ak_minidis,
+               aes(x = longitude.x, y = latitude.x, 
+                   xend = longitude.y, yend = latitude.y), 
+               color ="purple", linetype = "solid", size = .8)
+  labs(title = "Scatter Plot of Denny's and La Quinta",
+       x = "Longitude",
+       y = "Latitude",
+       color = "Dataset")
+
+```
+With the help of Chatgpt, I am able to add the purple lines that demostrate the minimum distances between Denny's and La Quinta hotels, yay!
 
 ### Exercise 9.1
 ```{r filtered NC data}
