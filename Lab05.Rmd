@@ -81,6 +81,7 @@ print(dn_lq_ak)
 
 ```{r minimum distance}
 
+## I changed summarize to mutate here because I want closest distance to be a new variable in the dataset while keeping other varaibles as well.
 dn_lq_ak_mindist <- dn_lq_ak %>%
   group_by(address.x) %>%
   mutate(closest = min(distance))
@@ -138,7 +139,7 @@ nrow(dn_nc)
 ### Exercise 9.2
 ```{r all possible pairings}
 pairings_of_lqnc <- nrow(dn_nc) * nrow(lq_nc)
-cat("The number of pairings between the locations of Denny’s and La Quinta hotels in Alaska are:", pairings_of_lqnc, "\n")
+cat("The number of pairings between the locations of Denny’s and La Quinta hotels in North Carolina are:", pairings_of_lqnc, "\n")
 ```
 ### Exercise 9.3
 ```{r all the distance between in NC}
@@ -156,20 +157,167 @@ print(dn_lq_nc)
 dn_lq_nc_minidis <- dn_lq_nc %>%
   group_by(address.x) %>%
   summarize(closest = min(distance))
+
 print(dn_lq_nc_minidis)
 ```
+### Exercise 9.5
+```{r}
+## Mean 
+mean_closestdist_nc <- mean(dn_lq_nc_minidis$closest) 
+## Standard deviation 
+sd_closestdist_nc <- sd(dn_lq_nc_minidis$closest) 
+
+dn_nc <- dn_nc %>% mutate(source = "Denny's")
+lq_nc <- lq_nc %>% mutate(source = "La Quinta")
+merged_data_nc <- bind_rows(dn_nc, lq_nc)
+
+## filter the closest distances
+dn_lq_nc_minidis <- dn_lq_nc %>%
+  group_by(address.x) %>%
+  filter(distance == min(distance)) %>% 
+  ungroup()
+
+## A scattor plot as the visualization to show the shortest distances between each Denny's and La Quinta hotel. 
+ggplot(merged_data_nc, aes(x = longitude, y = latitude, color = source)) +
+  geom_point(size = 3, alpha = 0.8) + 
+  geom_segment(data = dn_lq_nc_minidis,
+               aes(x = longitude.x, y = latitude.x, 
+                   xend = longitude.y, yend = latitude.y), 
+               color ="#89CFF0", linetype = "solid", size = .8)
+```
+
+There are `r nrow(dn_lq_nc_minidis)` minimum distances between each Denny's and a La Quinta hotel. The mean for the minimum distances is `r round(mean_closestdist_nc, 2)` while the standard deviation is `r round(sd_closestdist_nc, 2)`.
 
 
 ### Exercise 10.1
+```{r filtered TX data}
+dn_tx <- dennys %>%
+  filter(state == "TX")
+nrow(dn_tx)
 
+lq_tx <- laquinta %>%
+  filter(state == "TX")
+nrow(dn_tx)
+```
 ### Exercise 10.2
-
+```{r all possible pairings in TX}
+pairings_tx <- nrow(dn_tx) * nrow(lq_tx)
+cat("The number of pairings between the locations of Denny’s and La Quinta hotels in Texas are:", pairings_tx, "\n")
+```
 ### Exercise 10.3
+```{r all the distance between in TX}
+dn_lq_tx <- full_join(dn_tx, lq_tx, 
+                      by = "state")
+dn_lq_tx
 
+dn_lq_tx <- dn_lq_tx %>%
+  mutate(distance = haversine(longitude.x, latitude.x, longitude.y, latitude.y))
+
+print(dn_lq_tx)
+```
 ### Exercise 10.4
+```{r minimum distances in TX}
+dn_lq_tx_minidis <- dn_lq_tx %>%
+  group_by(address.x) %>%
+  summarize(closest = min(distance))
+
+print(dn_lq_tx_minidis)
+```
 ### Exercise 10.5
+```{r visualization of the shorest distances between each Dennys and La Quinta}
+## Mean 
+mean_closestdist_tx <- mean(dn_lq_tx_minidis$closest) 
+## Standard deviation 
+sd_closestdist_tx <- sd(dn_lq_tx_minidis$closest) 
 
-### Exercise 11
+dn_tx <- dn_tx %>% mutate(source = "Denny's")
+lq_tx <- lq_tx %>% mutate(source = "La Quinta")
+merged_data_tx <- bind_rows(dn_tx, lq_tx)
 
+## filter the closest distances
+dn_lq_tx_minidis <- dn_lq_tx %>%
+  group_by(address.x) %>%
+  filter(distance == min(distance)) %>% 
+  ungroup()
+
+## A scattor plot as the visualization to show the shortest distances between each Denny's and La Quinta hotel. 
+ggplot(merged_data_tx, aes(x = longitude, y = latitude, color = source)) +
+  geom_point(size = 3, alpha = 0.8) + 
+  geom_segment(data = dn_lq_tx_minidis,
+               aes(x = longitude.x, y = latitude.x, 
+                   xend = longitude.y, yend = latitude.y), 
+               color = "blue", linetype = "solid", size = .8)
+```
+
+There are `r nrow(dn_lq_tx_minidis)` minimum distances between each Denny's and a La Quinta hotel. The mean for the minimum distances is `r round(mean_closestdist_tx, 2)` while the standard deviation is `r round(sd_closestdist_tx, 2)`.
+Additionally, according to the visualized plot, in Texas there are a lot of La Quinta hotels that each Denny's has a La Quinta hotel near by. 
+
+### Exercise 11.1-- Ohio
+
+My undergraduate studies was in Ohio so I would like to know how La Quinta and Denny's are located in Ohio.
+
+```{r filtered OH data}
+dn_oh <- dennys %>%
+  filter(state == "OH")
+nrow(dn_oh)
+
+lq_oh <- laquinta %>%
+  filter(state == "OH")
+nrow(dn_oh)
+```
+### Exercise 11.2
+```{r all possible pairings in OH}
+pairings_oh <- nrow(dn_oh) * nrow(lq_oh)
+cat("The number of pairings between the locations of Denny’s and La Quinta hotels in Ohio are:", pairings_oh, "\n")
+```
+### Exercise 11.3
+```{r all the distance between in OH}
+dn_lq_oh <- full_join(dn_oh, lq_oh, 
+                      by = "state")
+dn_lq_oh
+
+dn_lq_oh <- dn_lq_oh %>%
+  mutate(distance = haversine(longitude.x, latitude.x, longitude.y, latitude.y))
+
+print(dn_lq_oh)
+```
+### Exercise 11.4
+```{r minimum distances in OH}
+dn_lq_oh_minidis <- dn_lq_oh %>%
+  group_by(address.x) %>%
+  summarize(closest = min(distance))
+
+print(dn_lq_oh_minidis)
+```
+### Exercise 11.5
+```{r visualization of the shorest distances between each Dennys and La Quinta in Ohio}
+## Mean 
+mean_closestdist_oh <- mean(dn_lq_oh_minidis$closest) 
+## Standard deviation 
+sd_closestdist_oh <- sd(dn_lq_oh_minidis$closest) 
+
+dn_oh <- dn_oh %>% mutate(source = "Denny's")
+lq_oh <- lq_oh %>% mutate(source = "La Quinta")
+merged_data_oh <- bind_rows(dn_oh, lq_oh)
+
+## filter the closest distances
+dn_lq_oh_minidis <- dn_lq_oh %>%
+  group_by(address.x) %>%
+  filter(distance == min(distance)) %>% 
+  ungroup()
+
+## A scattor plot as the visualization to show the shortest distances between each Denny's and La Quinta hotel. 
+ggplot(merged_data_oh, aes(x = longitude, y = latitude, color = source)) +
+  geom_point(size = 3, alpha = 0.8) + 
+  geom_segment(data = dn_lq_oh_minidis,
+               aes(x = longitude.x, y = latitude.x, 
+                   xend = longitude.y, yend = latitude.y), 
+               color = "#FFEE8C", linetype = "solid", size = .8)
+```
+
+There are `r nrow(dn_lq_oh_minidis)` minimum distances between each Denny's and a La Quinta hotel. The mean for the minimum distances is `r round(mean_closestdist_oh, 2)` while the standard deviation is `r round(sd_closestdist_oh, 2)`.
+Additionally, according to the visualized plot, there are alot of Denny's in Ohio and many of them do not have a La Quinta hotel near by. 
 
 ### Exercise 12
+
+Amomg all the states I have examined, I believe Mitch Hedberg’s joke that each Denny's has a La Quinta nearby is most likely to hold true in Texas and Alaska. According to the data, Texas' mean value for closest distance between Denny's and La Quinta is 5.79, while the mean value in Alaska is 4.41. Based on the scattor plot, we can see that Denny's in both Texas and Alaska have at least one really close La Quinta hotel. 
