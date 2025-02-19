@@ -3,9 +3,7 @@ title: "Lab 05 - Wrangling spatial data"
 author: "Allison Li"
 date: "02/09/2025"
 output: 
-  html_document: 
-    toc: yes
-    toc_float: yes
+  github_document
 ---
 
 ```{r load-pkg, message = FALSE}
